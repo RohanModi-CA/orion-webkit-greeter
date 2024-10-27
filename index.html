@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dotted Background</title>
+    <style>
+        body {
+            background-color: black;
+            margin: 0;
+            overflow: hidden;
+            font-family: monospace;
+        }
+
+        .dot {
+            width: 1px;
+            height: 1px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+
+            display: flex;        /* Add flexbox */
+            flex-direction: column; /* Align vertically */
+            align-items: center;   /* Center horizontally */
+        }
+
+        .greeting {
+            color: #ffffff;
+            font-size: 2em;
+            white-space: pre;
+            overflow: hidden;
+            border-right: .15em solid orange;
+            animation: typing 3s steps(20, end), blink-caret .65s step-end infinite alternate;
+        }
+        .greeting.stop {
+            animation:none;
+            border-right: none;
+        }
+
+        @keyframes typing {
+            from {
+                width: 0
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink-caret {
+            from,
+            to {
+                border-color: transparent
+            }
+
+            50% {
+                border-color: orange;
+            }
+        }
+
+        .password-box {
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .password-box.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .SessionLabel {
+            color: #ffffff;
+            white-space: pre;
+            overflow: hidden;
+            border-right: .15em solid orange;
+            animation: typing 3s steps(20, end), blink-caret .75s step-end infinite alternate;
+        }
+        .SelectedSession {
+            color: #FF00FF;
+        }
+
+        .session_list_class {
+            display: none;
+        }
+
+        .button {
+        display: none;
+        }
+
+
+        input[type="password"] {
+            padding: 10px;
+            border: 2px solid #ffffff;
+            border-radius: 5px;
+            background-color: black;
+            color: #ffffff;
+        }
+
+        input[type="password"]:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(50, 162, 168, 0.8);
+        }
+
+        .bottom-left-text {
+            position: fixed;         /* Position relative to viewport */
+            bottom: 10px;            /* Space from the bottom */
+            left: 10px;             /* Space from the left */
+            color: #ffffff;        /* Text color */
+        }
+        .bottom-right-text {
+            position: fixed;         /* Position relative to viewport */
+            bottom: 10px;            /* Space from the bottom */
+            right: 10px;             /* Space from the left */
+            color: #ffffff;        /* Text color */
+        }
+
+        .SessionLabel.stop{
+        animation:none;
+        border-right:none;
+        }
+    </style>
+</head>
+
+<body>
+
+
+<div id="login-form" class="">
+    <div id="login-form-box">
+    <div class="container">
+
+
+        <div id="pass-form">
+
+            <form action="POST">
+
+        <div class="greeting"></div>
+              <div id="input">
+        <div class="password-box">
+            <input type="password" placeholder="Password", id='input-password' name='password'>
+
+                <button id="pass-eye" type="button" class="button">
+                  <i class="mdi mdi-eye"></i>
+                </button>
+                <button id="submit-button" type="submit" class="button">
+                  <i class="mdi mdi-chevron-right mdi-24px"></i>
+                </button>
+
+        </div> <!-- Password Box -->
+
+              </div> <!-- input -->
+            </form>
+        </div> <!-- pass-form -->
+    </div> <!-- container -->
+
+        </div> <!-- login-form-box -->
+</div> <!-- login-form -->
+
+
+
+
+  <div class="bottom-left-text">
+      <div id = 'flashing_bottom_text' class="SessionLabel">We'll open <span id='selected_session'
+              class="SelectedSession"></span>. Click F6 to change that. </div>
+    <div id="session-list" class='session_list_class'>
+                <button id="session-list-button" class="button">
+                  <span class="mdi mdi-chevron-down mdi-24px"></span>
+                </button>
+                <ul id="sessions-dropdown" class="dropdown hide">
+                  <li><button>Awesome</button></li>
+                  <li><button>Ubuntu</button></li>
+                </ul>
+              </div> <!-- session list -->
+  </div> <!-- bottom left text -->
+
+
+
+    <script>
+        const spacing = 50;
+        const numDotsX = Math.floor(window.innerWidth / spacing) + 1;
+        const numDotsY = Math.floor(window.innerHeight / spacing) + 1;
+
+        const time_object = new Date();
+        const time_hour = time_object.getHours();
+        const time_of_day_list = ['morning', 'afternoon', 'evening'];
+        var time_of_day = ""
+        var preferred_name = 'Rohan'
+        if (time_hour < 12){
+            time_of_day = 'morning'
+        }
+        if (12 <= time_hour < 17){
+            time_of_day = 'afternoon'
+        }
+        if (time_hour >= 17){
+            time_of_day = 'evening'
+        }
+
+
+        for (let i = 0; i < numDotsY; i++) {
+            for (let j = 0; j < numDotsX; j++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                const x = j * spacing;
+                const y = i * spacing;
+                dot.style.left = x + 'px';
+                dot.style.top = y + 'px';
+                document.body.appendChild(dot);
+            }
+        }
+
+        const greeting = document.querySelector('.greeting');
+        const passwordBox = document.querySelector('.password-box');
+        greeting.textContent = `Good ${time_of_day}, ${preferred_name}.`;
+
+
+        const flashing_bottom_text = document.getElementById('flashing_bottom_text');
+
+        flashing_bottom_text.addEventListener('animationend', () => {
+        flashing_bottom_text.classList.add('stop');
+        })
+        greeting.addEventListener('animationend', () => {
+            passwordBox.classList.add('show');
+            greeting.classList.add('stop');
+            setTimeout(function() {
+                // Code to execute after 4 seconds
+                console.log("This runs after 4 seconds!");
+                document.getElementById('input-password').focus();
+            }, 100);
+
+        });
+
+    </script>
+    <script src="js/index.js" type="module"></script>
+</body>
+
+
+</html>
